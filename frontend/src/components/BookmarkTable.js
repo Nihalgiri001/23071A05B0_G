@@ -5,9 +5,13 @@ function BookmarkTable() {
 
   useEffect(() => {
     const fetchBookmarks = async () => {
-      const response = await fetch('http://localhost:5000/api/bookmarks');
-      const data = await response.json();
-      setBookmarks(data);
+      try {
+        const response = await fetch('http://localhost:5000/api/bookmarks');
+        const data = await response.json();
+        setBookmarks(data);
+      } catch (error) {
+        console.error('Error fetching bookmarks:', error);
+      }
     };
     fetchBookmarks();
   }, []);
