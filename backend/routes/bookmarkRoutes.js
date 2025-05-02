@@ -1,9 +1,11 @@
 const express = require('express');
-const { getBookmarks, addBookmark } = require('../controllers/bookmarkController');
-
 const router = express.Router();
+const bookmarkController = require('../controllers/bookmarkController');
 
-router.get('/', getBookmarks);
-router.post('/', addBookmark);
+// Routes
+router.post('/', bookmarkController.addBookmark);
+router.get('/', bookmarkController.getBookmarks);
+router.get('/search', bookmarkController.searchBookmarks);
+router.get('/download', bookmarkController.downloadBookmarks);
 
 module.exports = router;
