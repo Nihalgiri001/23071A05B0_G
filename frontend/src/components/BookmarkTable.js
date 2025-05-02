@@ -1,21 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-function BookmarkTable() {
-  const [bookmarks, setBookmarks] = useState([]);
-
-  useEffect(() => {
-    const fetchBookmarks = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/bookmarks');
-        const data = await response.json();
-        setBookmarks(data);
-      } catch (error) {
-        console.error('Error fetching bookmarks:', error);
-      }
-    };
-    fetchBookmarks();
-  }, []);
-
+function BookmarkTable({ bookmarks, setBookmarks }) {
   const downloadBookmarks = () => {
     const blob = new Blob([JSON.stringify(bookmarks, null, 2)], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -26,14 +11,34 @@ function BookmarkTable() {
     URL.revokeObjectURL(url);
   };
 
+  const removeBookmark = async (id) => {
+    try {
+      // Optimistically update the UI
+      setBookmarks((prevBookmarks) => prevBookmarks.filter((bookmark) => bookmark._id !== id));
+
+      const response = await fetch(`http://localhost:5000/api/bookmarks/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete bookmark from server');
+      }
+    } catch (error) {
+      console.error('Error removing bookmark:', error);
+      // Optionally, revert the optimistic update if the request fails
+      setBookmarks((prevBookmarks) => [...prevBookmarks, bookmarks.find((bookmark) => bookmark._id === id)]);
+    }
+  };
+
   return (
-    <div>
+    <div style={{ textAlign: 'center' }}>
       <button onClick={downloadBookmarks}>Download Bookmarks</button>
-      <table>
+      <table style={{ margin: '0 auto' }}>
         <thead>
           <tr>
             <th>Title</th>
             <th>URL</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -41,6 +46,7 @@ function BookmarkTable() {
             <tr key={bookmark._id}>
               <td>{bookmark.title}</td>
               <td><a href={bookmark.url} target="_blank" rel="noopener noreferrer">{bookmark.url}</a></td>
+              <td><button onClick={() => removeBookmark(bookmark._id)}>Remove</button></td>
             </tr>
           ))}
         </tbody>

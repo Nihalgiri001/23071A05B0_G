@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function BookmarkForm() {
+function BookmarkForm({ addBookmark }) {
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
 
@@ -13,8 +13,10 @@ function BookmarkForm() {
         body: JSON.stringify({ title, url }),
       });
       if (response.ok) {
+        const newBookmark = await response.json();
         setTitle('');
         setUrl('');
+        addBookmark(newBookmark); // Update the shared state
         alert('Bookmark added successfully!');
       }
     } catch (error) {

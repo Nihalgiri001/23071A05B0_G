@@ -7,5 +7,6 @@ router.post('/', bookmarkController.addBookmark);
 router.get('/', bookmarkController.getBookmarks);
 router.get('/search', bookmarkController.searchBookmarks);
 router.get('/download', bookmarkController.downloadBookmarks);
+router.delete('/:id', bookmarkController.deleteBookmark);
 
 module.exports = router;

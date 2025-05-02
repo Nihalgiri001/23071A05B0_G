@@ -22,7 +22,7 @@ exports.getBookmarks = async (req, res) => {
   }
 };
 
-// Search bookmarks
+// Update the searchBookmarks function to include filtering by tags
 exports.searchBookmarks = async (req, res) => {
   try {
     const { query } = req.query;
@@ -30,6 +30,7 @@ exports.searchBookmarks = async (req, res) => {
       $or: [
         { title: { $regex: query, $options: 'i' } },
         { url: { $regex: query, $options: 'i' } },
+        { tags: { $regex: query, $options: 'i' } }, // Added filtering by tags
       ],
     });
     res.status(200).json(bookmarks);
@@ -48,5 +49,21 @@ exports.downloadBookmarks = async (req, res) => {
     res.send(content);
   } catch (error) {
     res.status(500).json({ error: 'Failed to download bookmarks' });
+  }
+};
+
+// Delete a bookmark
+exports.deleteBookmark = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedBookmark = await Bookmark.findByIdAndDelete(id);
+
+    if (!deletedBookmark) {
+      return res.status(404).json({ error: 'Bookmark not found' });
+    }
+
+    res.status(200).json({ message: 'Bookmark deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete bookmark' });
   }
 };
