@@ -32,12 +32,12 @@ function BookmarkTable({ bookmarks, setBookmarks }) {
 
   return (
     <div style={{ textAlign: 'center' }}>
-      <button onClick={downloadBookmarks}>Download Bookmarks</button>
       <table style={{ margin: '0 auto' }}>
         <thead>
           <tr>
             <th>Title</th>
             <th>URL</th>
+            <th>Date Added</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -46,6 +46,7 @@ function BookmarkTable({ bookmarks, setBookmarks }) {
             <tr key={bookmark._id}>
               <td>{bookmark.title}</td>
               <td><a href={bookmark.url} target="_blank" rel="noopener noreferrer">{bookmark.url}</a></td>
+              <td>{new Date(bookmark.createdAt).toLocaleDateString('en-GB')}</td>
               <td><button onClick={() => removeBookmark(bookmark._id)}>Remove</button></td>
             </tr>
           ))}
